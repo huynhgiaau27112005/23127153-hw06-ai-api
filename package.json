@@ -1,0 +1,24 @@
+{
+  "name": "23127153-hw06-api-testing",
+  "version": "1.0.0",
+  "description": "HW06 API Testing — EShop Newman/Postman collection (Student 23127153)",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-postman-from-cases.js",
+    "prepare:cases": "node scripts/prepare-case-files.js",
+    "test": "npm run build && newman run postman/23127153_EShop_API.postman_collection.json -e postman/eshop-local.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export reports/newman-report.html",
+    "test:login": "newman run postman/23127153_EShop_API.postman_collection.json -e postman/eshop-local.postman_environment.json --folder \"FR-02 Login\" -r cli,htmlextra --reporter-htmlextra-export reports/newman-login.html",
+    "test:checkout": "newman run postman/23127153_EShop_API.postman_collection.json -e postman/eshop-local.postman_environment.json --folder \"FR-08 Checkout\" -r cli,htmlextra --reporter-htmlextra-export reports/newman-checkout.html",
+    "test:admin": "newman run postman/23127153_EShop_API.postman_collection.json -e postman/eshop-local.postman_environment.json --folder \"FR-19 Admin Users\" -r cli,htmlextra --reporter-htmlextra-export reports/newman-admin.html",
+    "matrix": "node scripts/generate-test-matrix.js"
+  },
+  "devDependencies": {
+    "newman": "^6.2.1",
+    "newman-reporter-htmlextra": "^1.23.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "Huỳnh Gia Âu <23127153>",
+  "license": "UNLICENSED"
+}

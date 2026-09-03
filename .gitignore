@@ -1,0 +1,34 @@
+# Dependencies & secrets
+node_modules/
+.env
+__pycache__/
+*.pyc
+.DS_Store
+
+# Logs
+*.log
+jmeter.log
+
+# Local databases
+database.sqlite
+*.sqlite
+*.db
+
+# OS / editor
+Thumbs.db
+.idea/
+.vscode/
+
+# Temp / CI ephemeral reports (KEEP reports/newman-report.html)
+temp/
+reports/*.json
+reports/newman-ci.html
+reports/newman-login.html
+reports/newman-checkout.html
+reports/newman-admin.html
+
+# Large binaries
+*.exe
+*.msi
+*.zip
+*.7z
