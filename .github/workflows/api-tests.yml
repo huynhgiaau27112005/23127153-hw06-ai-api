@@ -1,0 +1,80 @@
+name: HW06 API Tests
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'data/test-cases/**'
+      - 'postman/**'
+      - 'scripts/**'
+      - '.github/workflows/api-tests.yml'
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      fail_one_test:
+        description: 'Stop on first failure (--bail)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  newman:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout homework
+        uses: actions/checkout@v4
+
+      - name: Checkout EShop SUT
+        uses: actions/checkout@v4
+        with:
+          repository: ttbhanh/eshop-sut
+          path: eshop-sut
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Build Postman collection from JSON cases
+        run: node scripts/build-postman-from-cases.js
+
+      - name: Install & start EShop SUT (background)
+        working-directory: eshop-sut/backend
+        run: |
+          npm ci || npm install
+          PORT=3010 node server.js &
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            curl -sf http://127.0.0.1:3010/api/products && break
+            sleep 2
+          done
+          curl -sf http://127.0.0.1:3010/api/products || echo "SUT may be unavailable in CI"
+
+      - name: Run Newman
+        run: |
+          EXTRA=""
+          if [ "${{ github.event.inputs.fail_one_test }}" = "true" ]; then
+            EXTRA="--bail"
+          fi
+          npx newman run postman/23127153_EShop_API.postman_collection.json \
+            -e postman/eshop-local.postman_environment.json \
+            -r cli,htmlextra \
+            --reporter-htmlextra-export reports/newman-ci.html \
+            --reporter-htmlextra-title "HW06 CI — 23127153" \
+            $EXTRA
+        continue-on-error: true
+
+      - name: Upload Newman HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: newman-report
+          path: reports/newman-ci.html
