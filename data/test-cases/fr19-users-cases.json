@@ -1,0 +1,677 @@
+[
+  {
+    "id": "FR19-P01",
+    "title": "admin lists all users",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "positive",
+    "auditLabel": "VALID",
+    "preconditions": [
+      "login as admin@eshop.com"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "email",
+      "role"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-P02",
+    "title": "list returns array of users",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "schema",
+    "auditLabel": "VALID",
+    "preconditions": [
+      "admin token"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Response is JSON array"
+  },
+  {
+    "id": "FR19-P03",
+    "title": "seed admin user present",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "positive",
+    "auditLabel": "VALID",
+    "preconditions": [
+      "admin token"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "admin@eshop.com"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-P04",
+    "title": "seed test user present",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "positive",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "test@eshop.com"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-P05",
+    "title": "user objects exclude password field",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "schema",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "password must not appear in any element"
+  },
+  {
+    "id": "FR19-P06",
+    "title": "admin deletes disposable user",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/{{disposableUserId}}",
+    "category": "positive",
+    "auditLabel": "VALID",
+    "preconditions": [
+      "register disposable user",
+      "admin token"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "User deleted"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-P07",
+    "title": "deleted user absent from list",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "state",
+    "auditLabel": "INCOMPLETE",
+    "preconditions": [
+      "delete user then list"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Email no longer in response"
+  },
+  {
+    "id": "FR19-N01",
+    "title": "list users without token",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": null,
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "Unauthorized"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-N02",
+    "title": "list users invalid token",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer bad.token"
+    },
+    "body": null,
+    "expectedStatus": 403,
+    "expectedBodyContains": [
+      "Forbidden"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-N03",
+    "title": "delete user without token",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/99",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": null,
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "Unauthorized"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-N04",
+    "title": "delete user invalid token",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/99",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer bad.token"
+    },
+    "body": null,
+    "expectedStatus": 403,
+    "expectedBodyContains": [
+      "Forbidden"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-N05",
+    "title": "delete non-existent user id",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/999999",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "SUT returns 200 even when no row deleted"
+  },
+  {
+    "id": "FR19-S01",
+    "title": "regular user lists admin users (IDOR)",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "security",
+    "auditLabel": "INCOMPLETE",
+    "preconditions": [
+      "login as test@eshop.com"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "No role check on backend — security gap"
+  },
+  {
+    "id": "FR19-S02",
+    "title": "regular user deletes another user (IDOR)",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/{{targetId}}",
+    "category": "security",
+    "auditLabel": "INCOMPLETE",
+    "preconditions": [
+      "login as test@eshop.com",
+      "target disposable user"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Privilege escalation gap"
+  },
+  {
+    "id": "FR19-S03",
+    "title": "SQLi in delete user id",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/1 OR 1=1",
+    "category": "security",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 404,
+    "expectedBodyContains": [],
+    "notes": "Must not mass-delete users"
+  },
+  {
+    "id": "FR19-S04",
+    "title": "SQLi UNION in delete id path",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/1; DROP TABLE users;",
+    "category": "security",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 404,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR19-S05",
+    "title": "negative user id in path",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/-1",
+    "category": "security",
+    "auditLabel": "INCOMPLETE",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR19-D01",
+    "title": "list includes login_attempts field",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "schema",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "login_attempts"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-D02",
+    "title": "list includes locked_until field",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "schema",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "locked_until"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-D03",
+    "title": "delete id zero",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/0",
+    "category": "domain",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR19-D04",
+    "title": "delete id non-numeric string",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/abc",
+    "category": "domain",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 404,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR19-D05",
+    "title": "list response Content-Type json",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "schema",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Header Content-Type application/json"
+  },
+  {
+    "id": "FR19-D06",
+    "title": "admin deletes self",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/{{adminUserId}}",
+    "category": "state",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Dangerous — admin removes own account"
+  },
+  {
+    "id": "FR19-D07",
+    "title": "double delete same user id",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/{{disposableUserId}}",
+    "category": "state",
+    "auditLabel": "INCOMPLETE",
+    "preconditions": [
+      "delete once",
+      "delete again"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR19-D08",
+    "title": "list after mass registration",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "state",
+    "auditLabel": "INCOMPLETE",
+    "preconditions": [
+      "register 3 new users"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Array length increases"
+  },
+  {
+    "id": "FR19-D09",
+    "title": "user role values partition",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "domain",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Roles are admin or user only"
+  },
+  {
+    "id": "FR19-D10",
+    "title": "shipping_address field exposed",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "schema",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "shipping_address"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR19-STU01",
+    "title": "GET with trailing slash variant",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users/",
+    "category": "domain",
+    "auditLabel": "EXT",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 404,
+    "expectedBodyContains": [],
+    "notes": "Student: path normalization"
+  },
+  {
+    "id": "FR19-STU02",
+    "title": "DELETE with float id 1.5",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/1.5",
+    "category": "domain",
+    "auditLabel": "EXT",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 404,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR19-STU03",
+    "title": "list users with extra query param",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users?role=admin",
+    "category": "domain",
+    "auditLabel": "EXT",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Student: filter not implemented — returns all"
+  },
+  {
+    "id": "FR19-STU04",
+    "title": "concurrent delete same user",
+    "feature": "FR-19",
+    "method": "DELETE",
+    "endpoint": "/api/admin/users/{{disposableUserId}}",
+    "category": "state",
+    "auditLabel": "EXT",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Student: race condition"
+  },
+  {
+    "id": "FR19-STU05",
+    "title": "admin token after admin deleted",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "state",
+    "auditLabel": "EXT",
+    "preconditions": [
+      "admin deletes self",
+      "reuse old token"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Student: stale token behavior"
+  },
+  {
+    "id": "FR19-D11",
+    "title": "POST method on list endpoint",
+    "feature": "FR-19",
+    "method": "POST",
+    "endpoint": "/api/admin/users",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": {},
+    "expectedStatus": 404,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR19-D12",
+    "title": "GET on delete path with numeric id",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users/999",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Authorization": "Bearer {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR19-D13",
+    "title": "malformed Bearer prefix",
+    "feature": "FR-19",
+    "method": "GET",
+    "endpoint": "/api/admin/users",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Authorization": "Bear {{adminToken}}"
+    },
+    "body": null,
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "Unauthorized"
+    ],
+    "notes": ""
+  }
+]

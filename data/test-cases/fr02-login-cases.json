@@ -1,0 +1,739 @@
+[
+  {
+    "id": "FR02-P01",
+    "title": "valid user login returns token",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "positive",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "token",
+      "user",
+      "Login successful"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-P02",
+    "title": "valid admin login returns admin role",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "positive",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "admin@eshop.com",
+      "password": "Admin123!"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "token",
+      "admin"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-P03",
+    "title": "response user object excludes password",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "schema",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Assert password field absent in user object"
+  },
+  {
+    "id": "FR02-P04",
+    "title": "token is non-empty JWT string",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "schema",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Token matches JWT pattern"
+  },
+  {
+    "id": "FR02-P05",
+    "title": "login resets lockout counters on success",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "state",
+    "auditLabel": "INCOMPLETE",
+    "preconditions": [
+      "user had failed attempts but not locked"
+    ],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "login_attempts should be 0 after success"
+  },
+  {
+    "id": "FR02-N01",
+    "title": "empty email rejected",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "error"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-N02",
+    "title": "empty password rejected",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": ""
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "error"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-N03",
+    "title": "unknown email generic error",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "nobody@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "Invalid email or password"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-N04",
+    "title": "wrong password generic error",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "WrongPass1!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "Invalid email or password"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-N05",
+    "title": "missing email field",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "schema",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "error"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-N06",
+    "title": "missing password field",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "schema",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "error"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-N07",
+    "title": "null email value",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "schema",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": null,
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "error"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-N08",
+    "title": "null password value",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "schema",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": null
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "error"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-N09",
+    "title": "invalid email format still hits API",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "negative",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "not-an-email",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "error"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-N10",
+    "title": "locked account returns 403",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "state",
+    "auditLabel": "INCOMPLETE",
+    "preconditions": [
+      "register user lockme@eshop.com",
+      "fail login 2 times to trigger lock"
+    ],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "lockme@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 403,
+    "expectedBodyContains": [
+      "khóa"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-S01",
+    "title": "SQLi OR 1=1 in email",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "security",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "' OR '1'='1",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": "Must not bypass authentication"
+  },
+  {
+    "id": "FR02-S02",
+    "title": "SQLi DROP TABLE in password",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "security",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "'; DROP TABLE users; --"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": "Database must remain intact"
+  },
+  {
+    "id": "FR02-S03",
+    "title": "SQLi UNION SELECT in email",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "security",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com' UNION SELECT 1,2,3--",
+      "password": "x"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "error"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-S04",
+    "title": "XSS payload in email field",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "security",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "<script>alert(1)</script>@x.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": "Response must not reflect unescaped script"
+  },
+  {
+    "id": "FR02-S05",
+    "title": "LDAP injection style email",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "security",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "admin@eshop.com)(&)",
+      "password": "Admin123!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "error"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-S06",
+    "title": "password field extremely long",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "security",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": "Should not crash server"
+  },
+  {
+    "id": "FR02-D01",
+    "title": "email partition valid domain",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "domain",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR02-D02",
+    "title": "email partition subdomain",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "domain",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "user@mail.eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR02-D03",
+    "title": "password case sensitive mismatch",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "domain",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR02-D04",
+    "title": "email with plus addressing",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "domain",
+    "auditLabel": "INVALID",
+    "preconditions": [
+      "register test+alias@eshop.com if supported"
+    ],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test+alias@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR02-D05",
+    "title": "whitespace-only password",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "domain",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "   "
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR02-D06",
+    "title": "numeric password string",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "domain",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "12345678"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR02-D07",
+    "title": "email uppercase variant",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "domain",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "TEST@ESHOP.COM",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": "SQLite default case sensitivity for email"
+  },
+  {
+    "id": "FR02-D08",
+    "title": "empty JSON body",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "schema",
+    "auditLabel": "INVALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {},
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "error"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR02-D09",
+    "title": "extra unknown fields ignored",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "schema",
+    "auditLabel": "VALID",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "Test1234!",
+      "rememberMe": true,
+      "role": "admin"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Extra role field must not elevate privileges"
+  },
+  {
+    "id": "FR02-STU01",
+    "title": "leading space in email trimmed or rejected",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "domain",
+    "auditLabel": "EXT",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": " test@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": "Student: boundary on email whitespace"
+  },
+  {
+    "id": "FR02-STU02",
+    "title": "trailing space in password",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "domain",
+    "auditLabel": "EXT",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "Test1234! "
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": "Student: password exact match"
+  },
+  {
+    "id": "FR02-STU03",
+    "title": "login with Content-Type text/plain",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "schema",
+    "auditLabel": "EXT",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "text/plain"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 400,
+    "expectedBodyContains": [],
+    "notes": "Student: wrong content type"
+  },
+  {
+    "id": "FR02-STU04",
+    "title": "concurrent duplicate login requests",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "state",
+    "auditLabel": "EXT",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "test@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Student: both parallel requests should return 200"
+  },
+  {
+    "id": "FR02-STU05",
+    "title": "vietnamese diacritics in email local part",
+    "feature": "FR-02",
+    "method": "POST",
+    "endpoint": "/api/login",
+    "category": "domain",
+    "auditLabel": "EXT",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "nguyễn@eshop.com",
+      "password": "Test1234!"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": "Student: i18n email partition"
+  }
+]

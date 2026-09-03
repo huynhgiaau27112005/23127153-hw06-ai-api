@@ -1,0 +1,817 @@
+[
+  {
+    "id": "FR08-P01",
+    "title": "checkout with valid cart and address",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "positive",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login as test@eshop.com",
+      "POST /api/cart with AirPods"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi, Q1, TP.HCM"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "Checkout successful",
+      "orderId"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR08-P02",
+    "title": "order status pending after checkout",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "state",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "add single item to cart"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi, Q1, TP.HCM"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Verify via GET /api/orders/my-orders status=pending"
+  },
+  {
+    "id": "FR08-P03",
+    "title": "checkout multiple cart items",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "positive",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "add iPhone and Samsung to cart"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 36000000,
+      "shipping_address": "456 Nguyen Hue, Q1"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [
+      "orderId"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR08-P04",
+    "title": "checkout with minimum valid address",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "positive",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart has one item"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "A"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-P05",
+    "title": "checkout response includes numeric orderId",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "schema",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "orderId must be integer > 0"
+  },
+  {
+    "id": "FR08-N01",
+    "title": "checkout without Authorization header",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "negative",
+    "auditLabel": "ai-generated",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [
+      "Unauthorized"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR08-N02",
+    "title": "checkout with invalid token",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "negative",
+    "auditLabel": "ai-generated",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer invalid.token.here"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 403,
+    "expectedBodyContains": [
+      "Forbidden"
+    ],
+    "notes": ""
+  },
+  {
+    "id": "FR08-N03",
+    "title": "missing total_amount",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "schema",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "SQLite may insert NULL — documents actual behavior"
+  },
+  {
+    "id": "FR08-N04",
+    "title": "missing shipping_address",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "schema",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-N05",
+    "title": "empty shipping_address",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "negative",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": ""
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-N06",
+    "title": "negative total_amount",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "negative",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": -1000,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Business rule gap — order should not allow negative"
+  },
+  {
+    "id": "FR08-N07",
+    "title": "zero total_amount",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "domain",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 0,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-N08",
+    "title": "empty cart checkout",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "state",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "empty cart"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 0,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Still creates order — state transition test"
+  },
+  {
+    "id": "FR08-S01",
+    "title": "tampered total lower than cart sum",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "security",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart total 6000000"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 1,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "IDOR/business logic — server does not validate total"
+  },
+  {
+    "id": "FR08-S02",
+    "title": "tampered total higher than cart sum",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "security",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 999999999,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-S03",
+    "title": "SQLi in shipping_address",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "security",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123'; DROP TABLE orders; --"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-S04",
+    "title": "XSS in shipping_address stored",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "security",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "<img src=x onerror=alert(1)>"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-S05",
+    "title": "use another user token (IDOR)",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "security",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login user A",
+      "login user B",
+      "user B cart setup",
+      "send with user A token"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{otherUserToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Order should bind to token owner not cart owner"
+  },
+  {
+    "id": "FR08-D01",
+    "title": "total_amount as string number",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "schema",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": "6000000",
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-D02",
+    "title": "total_amount float value",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "domain",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000.5,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-D03",
+    "title": "shipping_address as number type",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "schema",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": 12345
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-D04",
+    "title": "very long shipping address",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "domain",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-D05",
+    "title": "unicode vietnamese address",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "domain",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Đường Lê Lợi, Quận 1, TP.HCM"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-D06",
+    "title": "extra coupon fields in body",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "schema",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi",
+      "coupon": "SAVE10"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Coupon not applied at checkout API"
+  },
+  {
+    "id": "FR08-D07",
+    "title": "double checkout same cart",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "state",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup",
+      "checkout once",
+      "checkout again"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Creates duplicate orders — state test"
+  },
+  {
+    "id": "FR08-D08",
+    "title": "checkout then verify my-orders count",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "state",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Order count increments by 1"
+  },
+  {
+    "id": "FR08-D09",
+    "title": "null total_amount",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "schema",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": null,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-D10",
+    "title": "null shipping_address",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "schema",
+    "auditLabel": "ai-generated",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": null
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-STU01",
+    "title": "checkout with expired JWT",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "security",
+    "auditLabel": "student-extension",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{expiredToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 403,
+    "expectedBodyContains": [],
+    "notes": "Student: token expiry boundary"
+  },
+  {
+    "id": "FR08-STU02",
+    "title": "checkout address with newline chars",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "domain",
+    "auditLabel": "student-extension",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "Line1\nLine2\r\nLine3"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-STU03",
+    "title": "checkout after cart cleared manually",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "state",
+    "auditLabel": "student-extension",
+    "preconditions": [
+      "login",
+      "add then clear cart via new session"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": "Student: cart is in-memory per server restart"
+  },
+  {
+    "id": "FR08-STU04",
+    "title": "Bearer prefix missing in auth",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "negative",
+    "auditLabel": "student-extension",
+    "preconditions": [],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "{{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 401,
+    "expectedBodyContains": [],
+    "notes": "Student: malformed auth header"
+  },
+  {
+    "id": "FR08-STU05",
+    "title": "checkout with only whitespace address",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "domain",
+    "auditLabel": "student-extension",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000,
+      "shipping_address": "   "
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  },
+  {
+    "id": "FR08-STU06",
+    "title": "total_amount scientific notation",
+    "feature": "FR-08",
+    "method": "POST",
+    "endpoint": "/api/checkout",
+    "category": "domain",
+    "auditLabel": "student-extension",
+    "preconditions": [
+      "login",
+      "cart setup"
+    ],
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{userToken}}"
+    },
+    "body": {
+      "total_amount": 6000000.0,
+      "shipping_address": "123 Le Loi"
+    },
+    "expectedStatus": 200,
+    "expectedBodyContains": [],
+    "notes": ""
+  }
+]
