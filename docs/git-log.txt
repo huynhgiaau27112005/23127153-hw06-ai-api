@@ -1,3 +1,5 @@
+﻿eff0ba4 docs: CI run links, bug issue URLs, remove video requirement
+26af555 Record repository history for submission
 4c441e6 Add agent skill and README with GitHub link
 3c5358a Add Newman HTML report artifact
 d532dbb Document BUG-01 through BUG-06 findings
