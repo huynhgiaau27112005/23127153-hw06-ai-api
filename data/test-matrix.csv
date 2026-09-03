@@ -1,0 +1,106 @@
+﻿StudentId,CaseId,Feature,Title,Method,Endpoint,Category,AuditLabel,ExpectedStatus,Preconditions,Notes,BodySummary
+23127153,FR02-P01,FR-02,valid user login returns token,POST,/api/login,positive,VALID,200,,,"{""email"":""test@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-P02,FR-02,valid admin login returns admin role,POST,/api/login,positive,VALID,200,,,"{""email"":""admin@eshop.com"",""password"":""Admin123!""}"
+23127153,FR02-P03,FR-02,response user object excludes password,POST,/api/login,schema,VALID,200,,Assert password field absent in user object,"{""email"":""test@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-P04,FR-02,token is non-empty JWT string,POST,/api/login,schema,VALID,200,,Token matches JWT pattern,"{""email"":""test@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-P05,FR-02,login resets lockout counters on success,POST,/api/login,state,INCOMPLETE,200,user had failed attempts but not locked,login_attempts should be 0 after success,"{""email"":""test@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-N01,FR-02,empty email rejected,POST,/api/login,negative,INVALID,401,,,"{""email"":"""",""password"":""Test1234!""}"
+23127153,FR02-N02,FR-02,empty password rejected,POST,/api/login,negative,INVALID,401,,,"{""email"":""test@eshop.com"",""password"":""""}"
+23127153,FR02-N03,FR-02,unknown email generic error,POST,/api/login,negative,INVALID,401,,,"{""email"":""nobody@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-N04,FR-02,wrong password generic error,POST,/api/login,negative,INVALID,401,,,"{""email"":""test@eshop.com"",""password"":""WrongPass1!""}"
+23127153,FR02-N05,FR-02,missing email field,POST,/api/login,schema,INVALID,401,,,"{""password"":""Test1234!""}"
+23127153,FR02-N06,FR-02,missing password field,POST,/api/login,schema,INVALID,401,,,"{""email"":""test@eshop.com""}"
+23127153,FR02-N07,FR-02,null email value,POST,/api/login,schema,INVALID,401,,,"{""email"":null,""password"":""Test1234!""}"
+23127153,FR02-N08,FR-02,null password value,POST,/api/login,schema,INVALID,401,,,"{""email"":""test@eshop.com"",""password"":null}"
+23127153,FR02-N09,FR-02,invalid email format still hits API,POST,/api/login,negative,INVALID,401,,,"{""email"":""not-an-email"",""password"":""Test1234!""}"
+23127153,FR02-N10,FR-02,locked account returns 403,POST,/api/login,state,INCOMPLETE,403,register user lockme@eshop.com; fail login 2 times to trigger lock,,"{""email"":""lockme@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-S01,FR-02,SQLi OR 1=1 in email,POST,/api/login,security,INVALID,401,,Must not bypass authentication,"{""email"":""' OR '1'='1"",""password"":""Test1234!""}"
+23127153,FR02-S02,FR-02,SQLi DROP TABLE in password,POST,/api/login,security,INVALID,401,,Database must remain intact,"{""email"":""test@eshop.com"",""password"":""'; DROP TABLE users; --""}"
+23127153,FR02-S03,FR-02,SQLi UNION SELECT in email,POST,/api/login,security,INVALID,401,,,"{""email"":""test@eshop.com' UNION SELECT 1,2,3--"",""password"":""x""}"
+23127153,FR02-S04,FR-02,XSS payload in email field,POST,/api/login,security,INVALID,401,,Response must not reflect unescaped script,"{""email"":""<script>alert(1)</script>@x.com"",""password"":""Test1234!""}"
+23127153,FR02-S05,FR-02,LDAP injection style email,POST,/api/login,security,INVALID,401,,,"{""email"":""admin@eshop.com)(&)"",""password"":""Admin123!""}"
+23127153,FR02-S06,FR-02,password field extremely long,POST,/api/login,security,INVALID,401,,Should not crash server,"{""email"":""test@eshop.com"",""password"":""AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA..."
+23127153,FR02-D01,FR-02,email partition valid domain,POST,/api/login,domain,VALID,200,,,"{""email"":""test@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-D02,FR-02,email partition subdomain,POST,/api/login,domain,INVALID,401,,,"{""email"":""user@mail.eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-D03,FR-02,password case sensitive mismatch,POST,/api/login,domain,INVALID,401,,,"{""email"":""test@eshop.com"",""password"":""test1234!""}"
+23127153,FR02-D04,FR-02,email with plus addressing,POST,/api/login,domain,INVALID,401,register test+alias@eshop.com if supported,,"{""email"":""test+alias@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-D05,FR-02,whitespace-only password,POST,/api/login,domain,INVALID,401,,,"{""email"":""test@eshop.com"",""password"":""   ""}"
+23127153,FR02-D06,FR-02,numeric password string,POST,/api/login,domain,INVALID,401,,,"{""email"":""test@eshop.com"",""password"":""12345678""}"
+23127153,FR02-D07,FR-02,email uppercase variant,POST,/api/login,domain,INVALID,401,,SQLite default case sensitivity for email,"{""email"":""TEST@ESHOP.COM"",""password"":""Test1234!""}"
+23127153,FR02-D08,FR-02,empty JSON body,POST,/api/login,schema,INVALID,401,,,{}
+23127153,FR02-D09,FR-02,extra unknown fields ignored,POST,/api/login,schema,VALID,200,,Extra role field must not elevate privileges,"{""email"":""test@eshop.com"",""password"":""Test1234!"",""rememberMe"":true,""role"":""admin""}"
+23127153,FR02-STU01,FR-02,leading space in email trimmed or rejected,POST,/api/login,domain,EXT,401,,Student: boundary on email whitespace,"{""email"":"" test@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-STU02,FR-02,trailing space in password,POST,/api/login,domain,EXT,401,,Student: password exact match,"{""email"":""test@eshop.com"",""password"":""Test1234! ""}"
+23127153,FR02-STU03,FR-02,login with Content-Type text/plain,POST,/api/login,schema,EXT,400,,Student: wrong content type,"{""email"":""test@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-STU04,FR-02,concurrent duplicate login requests,POST,/api/login,state,EXT,200,,Student: both parallel requests should return 200,"{""email"":""test@eshop.com"",""password"":""Test1234!""}"
+23127153,FR02-STU05,FR-02,vietnamese diacritics in email local part,POST,/api/login,domain,EXT,401,,Student: i18n email partition,"{""email"":""nguyễn@eshop.com"",""password"":""Test1234!""}"
+23127153,FR08-P01,FR-08,checkout with valid cart and address,POST,/api/checkout,positive,VALID,200,login as test@eshop.com; POST /api/cart with AirPods,,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi, Q1, TP.HCM""}"
+23127153,FR08-P02,FR-08,order status pending after checkout,POST,/api/checkout,state,INCOMPLETE,200,login; add single item to cart,Verify via GET /api/orders/my-orders status=pending,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi, Q1, TP.HCM""}"
+23127153,FR08-P03,FR-08,checkout multiple cart items,POST,/api/checkout,positive,VALID,200,login; add iPhone and Samsung to cart,,"{""total_amount"":36000000,""shipping_address"":""456 Nguyen Hue, Q1""}"
+23127153,FR08-P04,FR-08,checkout with minimum valid address,POST,/api/checkout,positive,VALID,200,login; cart has one item,,"{""total_amount"":6000000,""shipping_address"":""A""}"
+23127153,FR08-P05,FR-08,checkout response includes numeric orderId,POST,/api/checkout,schema,VALID,200,login; cart setup,orderId must be integer > 0,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-N01,FR-08,checkout without Authorization header,POST,/api/checkout,negative,INVALID,401,,,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-N02,FR-08,checkout with invalid token,POST,/api/checkout,negative,INVALID,403,,,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-N03,FR-08,missing total_amount,POST,/api/checkout,schema,VALID,200,login; cart setup,SQLite may insert NULL — documents actual behavior,"{""shipping_address"":""123 Le Loi""}"
+23127153,FR08-N04,FR-08,missing shipping_address,POST,/api/checkout,schema,VALID,200,login; cart setup,,"{""total_amount"":6000000}"
+23127153,FR08-N05,FR-08,empty shipping_address,POST,/api/checkout,negative,INVALID,200,login; cart setup,,"{""total_amount"":6000000,""shipping_address"":""""}"
+23127153,FR08-N06,FR-08,negative total_amount,POST,/api/checkout,negative,INVALID,200,login; cart setup,Business rule gap — order should not allow negative,"{""total_amount"":-1000,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-N07,FR-08,zero total_amount,POST,/api/checkout,domain,VALID,200,login; cart setup,,"{""total_amount"":0,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-N08,FR-08,empty cart checkout,POST,/api/checkout,state,INCOMPLETE,200,login; empty cart,Still creates order — state transition test,"{""total_amount"":0,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-S01,FR-08,tampered total lower than cart sum,POST,/api/checkout,security,INCOMPLETE,200,login; cart total 6000000,IDOR/business logic — server does not validate total,"{""total_amount"":1,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-S02,FR-08,tampered total higher than cart sum,POST,/api/checkout,security,INCOMPLETE,200,login; cart setup,,"{""total_amount"":999999999,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-S03,FR-08,SQLi in shipping_address,POST,/api/checkout,security,INCOMPLETE,200,login; cart setup,,"{""total_amount"":6000000,""shipping_address"":""123'; DROP TABLE orders; --""}"
+23127153,FR08-S04,FR-08,XSS in shipping_address stored,POST,/api/checkout,security,INCOMPLETE,200,login; cart setup,,"{""total_amount"":6000000,""shipping_address"":""<img src=x onerror=alert(1)>""}"
+23127153,FR08-S05,FR-08,use another user token (IDOR),POST,/api/checkout,security,INCOMPLETE,200,login user A; login user B; user B cart setup; send with user A token,Order should bind to token owner not cart owner,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-D01,FR-08,total_amount as string number,POST,/api/checkout,schema,VALID,200,login; cart setup,,"{""total_amount"":""6000000"",""shipping_address"":""123 Le Loi""}"
+23127153,FR08-D02,FR-08,total_amount float value,POST,/api/checkout,domain,VALID,200,login; cart setup,,"{""total_amount"":6000000.5,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-D03,FR-08,shipping_address as number type,POST,/api/checkout,schema,VALID,200,login; cart setup,,"{""total_amount"":6000000,""shipping_address"":12345}"
+23127153,FR08-D04,FR-08,very long shipping address,POST,/api/checkout,domain,VALID,200,login; cart setup,,"{""total_amount"":6000000,""shipping_address"":""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..."
+23127153,FR08-D05,FR-08,unicode vietnamese address,POST,/api/checkout,domain,VALID,200,login; cart setup,,"{""total_amount"":6000000,""shipping_address"":""123 Đường Lê Lợi, Quận 1, TP.HCM""}"
+23127153,FR08-D06,FR-08,extra coupon fields in body,POST,/api/checkout,schema,VALID,200,login; cart setup,Coupon not applied at checkout API,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi"",""coupon"":""SAVE10""}"
+23127153,FR08-D07,FR-08,double checkout same cart,POST,/api/checkout,state,INCOMPLETE,200,login; cart setup; checkout once; checkout again,Creates duplicate orders — state test,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-D08,FR-08,checkout then verify my-orders count,POST,/api/checkout,state,INCOMPLETE,200,login; cart setup,Order count increments by 1,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-D09,FR-08,null total_amount,POST,/api/checkout,schema,VALID,200,login; cart setup,,"{""total_amount"":null,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-D10,FR-08,null shipping_address,POST,/api/checkout,schema,VALID,200,login; cart setup,,"{""total_amount"":6000000,""shipping_address"":null}"
+23127153,FR08-STU01,FR-08,checkout with expired JWT,POST,/api/checkout,security,EXT,403,,Student: token expiry boundary,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-STU02,FR-08,checkout address with newline chars,POST,/api/checkout,domain,EXT,200,login; cart setup,,"{""total_amount"":6000000,""shipping_address"":""Line1\nLine2\r\nLine3""}"
+23127153,FR08-STU03,FR-08,checkout after cart cleared manually,POST,/api/checkout,state,EXT,200,login; add then clear cart via new session,Student: cart is in-memory per server restart,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-STU04,FR-08,Bearer prefix missing in auth,POST,/api/checkout,negative,EXT,401,,Student: malformed auth header,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}"
+23127153,FR08-STU05,FR-08,checkout with only whitespace address,POST,/api/checkout,domain,EXT,200,login; cart setup,,"{""total_amount"":6000000,""shipping_address"":""   ""}"
+23127153,FR08-D11,FR-08,checkout with array body,POST,/api/checkout,schema,INVALID,400,login; cart setup,Array instead of object,"[{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}]"
+23127153,FR08-D12,FR-08,checkout missing Content-Type,POST,/api/checkout,schema,VALID,200,login; cart setup,,"{""total_amount"":6000000,""shipping_address"":""123 Le Loi""}"
+23127153,FR19-P01,FR-19,admin lists all users,GET,/api/admin/users,positive,VALID,200,login as admin@eshop.com,,
+23127153,FR19-P02,FR-19,list returns array of users,GET,/api/admin/users,schema,VALID,200,admin token,Response is JSON array,
+23127153,FR19-P03,FR-19,seed admin user present,GET,/api/admin/users,positive,VALID,200,admin token,,
+23127153,FR19-P04,FR-19,seed test user present,GET,/api/admin/users,positive,VALID,200,,,
+23127153,FR19-P05,FR-19,user objects exclude password field,GET,/api/admin/users,schema,VALID,200,,password must not appear in any element,
+23127153,FR19-P06,FR-19,admin deletes disposable user,DELETE,/api/admin/users/{{disposableUserId}},positive,VALID,200,register disposable user; admin token,,
+23127153,FR19-P07,FR-19,deleted user absent from list,GET,/api/admin/users,state,INCOMPLETE,200,delete user then list,Email no longer in response,
+23127153,FR19-N01,FR-19,list users without token,GET,/api/admin/users,negative,INVALID,401,,,
+23127153,FR19-N02,FR-19,list users invalid token,GET,/api/admin/users,negative,INVALID,403,,,
+23127153,FR19-N03,FR-19,delete user without token,DELETE,/api/admin/users/99,negative,INVALID,401,,,
+23127153,FR19-N04,FR-19,delete user invalid token,DELETE,/api/admin/users/99,negative,INVALID,403,,,
+23127153,FR19-N05,FR-19,delete non-existent user id,DELETE,/api/admin/users/999999,negative,INVALID,200,,SUT returns 200 even when no row deleted,
+23127153,FR19-S01,FR-19,regular user lists admin users (IDOR),GET,/api/admin/users,security,INCOMPLETE,200,login as test@eshop.com,No role check on backend — security gap,
+23127153,FR19-S02,FR-19,regular user deletes another user (IDOR),DELETE,/api/admin/users/{{targetId}},security,INCOMPLETE,200,login as test@eshop.com; target disposable user,Privilege escalation gap,
+23127153,FR19-S03,FR-19,SQLi in delete user id,DELETE,/api/admin/users/1 OR 1=1,security,INVALID,404,,Must not mass-delete users,
+23127153,FR19-S04,FR-19,SQLi UNION in delete id path,DELETE,/api/admin/users/1; DROP TABLE users;,security,INVALID,404,,,
+23127153,FR19-S05,FR-19,negative user id in path,DELETE,/api/admin/users/-1,security,INCOMPLETE,200,,,
+23127153,FR19-D01,FR-19,list includes login_attempts field,GET,/api/admin/users,schema,VALID,200,,,
+23127153,FR19-D02,FR-19,list includes locked_until field,GET,/api/admin/users,schema,VALID,200,,,
+23127153,FR19-D03,FR-19,delete id zero,DELETE,/api/admin/users/0,domain,VALID,200,,,
+23127153,FR19-D04,FR-19,delete id non-numeric string,DELETE,/api/admin/users/abc,domain,INVALID,404,,,
+23127153,FR19-D05,FR-19,list response Content-Type json,GET,/api/admin/users,schema,VALID,200,,Header Content-Type application/json,
+23127153,FR19-D06,FR-19,admin deletes self,DELETE,/api/admin/users/{{adminUserId}},state,VALID,200,,Dangerous — admin removes own account,
+23127153,FR19-D07,FR-19,double delete same user id,DELETE,/api/admin/users/{{disposableUserId}},state,INCOMPLETE,200,delete once; delete again,,
+23127153,FR19-D08,FR-19,list after mass registration,GET,/api/admin/users,state,INCOMPLETE,200,register 3 new users,Array length increases,
+23127153,FR19-D09,FR-19,user role values partition,GET,/api/admin/users,domain,VALID,200,,Roles are admin or user only,
+23127153,FR19-D10,FR-19,shipping_address field exposed,GET,/api/admin/users,schema,VALID,200,,,
+23127153,FR19-STU01,FR-19,GET with trailing slash variant,GET,/api/admin/users/,domain,EXT,404,,Student: path normalization,
+23127153,FR19-STU02,FR-19,DELETE with float id 1.5,DELETE,/api/admin/users/1.5,domain,EXT,404,,,
+23127153,FR19-STU03,FR-19,list users with extra query param,GET,/api/admin/users?role=admin,domain,EXT,200,,Student: filter not implemented — returns all,
+23127153,FR19-STU04,FR-19,concurrent delete same user,DELETE,/api/admin/users/{{disposableUserId}},state,EXT,200,,Student: race condition,
+23127153,FR19-STU05,FR-19,admin token after admin deleted,GET,/api/admin/users,state,EXT,200,admin deletes self; reuse old token,Student: stale token behavior,
+23127153,FR19-D11,FR-19,POST method on list endpoint,POST,/api/admin/users,negative,INVALID,404,,,{}
+23127153,FR19-D12,FR-19,GET on delete path with numeric id,GET,/api/admin/users/999,negative,INVALID,200,,,
+23127153,FR19-D13,FR-19,malformed Bearer prefix,GET,/api/admin/users,negative,INVALID,401,,,
