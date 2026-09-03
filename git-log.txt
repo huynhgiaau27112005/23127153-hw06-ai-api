@@ -1,0 +1,11 @@
+4c441e6 Add agent skill and README with GitHub link
+3c5358a Add Newman HTML report artifact
+d532dbb Document BUG-01 through BUG-06 findings
+5e4f096 Add API testing documentation suite
+a58bde3 Add GitHub Actions API test workflow
+e12ccd3 Add Newman runner scripts
+de7da3e Add Postman collection and local environment
+0d415e7 Add case generators and Postman build scripts
+7cd75fd Add test matrix CSV and case audit
+9c93b97 Add FR-02 FR-08 FR-19 JSON test cases
+9e4126b Add package manifests and gitignore
