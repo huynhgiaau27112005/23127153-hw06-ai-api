@@ -1,19 +1,21 @@
 # CI/CD Report — HW06 API Testing
 
 **Student:** Huỳnh Gia Âu (23127153)  
-**Pipeline:** `.github/workflows/api-tests.yml`
+**Pipeline:** `.github/workflows/api-tests.yml`  
+**Repository:** https://github.com/huynhgiaau27112005/23127153-hw06-ai-api
 
 ## Pipeline Overview
 
 ```mermaid
 flowchart LR
-  A[Push / PR / workflow_dispatch] --> B[Checkout]
-  B --> C[Setup Node 20]
-  C --> D[npm ci]
-  D --> E[build-postman-from-cases.js]
-  E --> F[Start EShop on :3010]
-  F --> G[Newman run]
-  G --> H[Upload HTML artifact]
+  A[Push / PR / workflow_dispatch] --> B[Checkout homework]
+  B --> C[Checkout ttbhanh/eshop-sut]
+  C --> D[Setup Node 20]
+  D --> E[npm ci]
+  E --> F[build-postman-from-cases.js]
+  F --> G[Start EShop on :3010]
+  G --> H[Newman run]
+  H --> I[Upload HTML artifact]
 ```
 
 ## Triggers
@@ -30,15 +32,25 @@ flowchart LR
 |-------|------|---------|--------|
 | `fail_one_test` | choice | `false` | When `true`, adds `--bail` to Newman (stop on first failure) |
 
+## Two Sample Runs (required)
+
+| # | Input | Run URL | Conclusion |
+|---|-------|---------|------------|
+| 1 | `fail_one_test=false` (full suite) | https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/actions/runs/33755055651 | Job completed; Newman exit ≠ 0 due to known SUT bugs (documented). Artifact `newman-report` uploaded. |
+| 2 | `fail_one_test=true` (`--bail`) | https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/actions/runs/33755064475 | Job completed; stops earlier on first failure. Artifact uploaded. |
+
+Screenshots of these runs: open the Actions URLs above (workflow_dispatch details show the input values). CI HTML report is available as the `newman-report` artifact on each run.
+
 ## Steps Detail
 
-1. **Checkout** — `actions/checkout@v4`
-2. **Node setup** — v20 with npm cache
-3. **Install** — `npm ci` fallback to `npm install`
-4. **Build collection** — `node scripts/build-postman-from-cases.js`
-5. **Start SUT** — background `PORT=3010 node server.js` in `eshop-sut/backend`
-6. **Newman** — full collection, `cli` + `htmlextra` reporters
-7. **Artifact** — uploads `reports/newman-ci.html` (always, even on failure)
+1. **Checkout homework** — `actions/checkout@v4`
+2. **Checkout SUT** — `ttbhanh/eshop-sut` into `eshop-sut/`
+3. **Node setup** — v20 with npm cache
+4. **Install** — `npm ci` fallback to `npm install`
+5. **Build collection** — `node scripts/build-postman-from-cases.js`
+6. **Start SUT** — `PORT=3010 node server.js` in `eshop-sut/backend` (wait loop for `/api/products`)
+7. **Newman** — full collection, `cli` + `htmlextra` reporters
+8. **Artifact** — uploads `reports/newman-ci.html` (always)
 
 ## Local Equivalent
 
@@ -48,34 +60,14 @@ flowchart LR
 .\scripts\run-newman.ps1 -Folder "FR-02 Login"
 ```
 
-## Configuration
-
-| Setting | Value |
-|---------|-------|
-| Collection | `postman/23127153_EShop_API.postman_collection.json` |
-| Environment | `postman/eshop-local.postman_environment.json` |
-| baseUrl | `http://127.0.0.1:3010` |
-| Reporters | `cli`, `htmlextra` |
-
 ## Known CI Limitations
 
-1. **Sibling repo dependency** — workflow expects `../eshop-sut/backend`; may fail if repo is standalone
-2. **SUT startup race** — 3-second sleep may be insufficient on slow runners
-3. **continue-on-error** — Newman step set to not fail the job (for homework artifact collection)
-4. **State-dependent tests** — lockout and delete tests may interfere in full suite runs
+1. State-dependent tests (login lockout, deletes) may fail in a full sequential suite
+2. `continue-on-error` on Newman keeps the workflow green so artifacts always upload for grading
+3. Some assertions document real SUT defects (see `docs/bugs.md` + GitHub Issues #1–#6)
 
 ## Recommendations
 
-- Add Docker Compose service for EShop SUT
-- Use `services:` container instead of background process
 - Split pools into parallel matrix jobs
-- Fail the job on Newman exit code after artifact upload
-
-## Sample Run (Local)
-
-```
-npm run build
-.\scripts\run-newman.ps1 -Report reports/newman-report.html
-```
-
-Report: `reports/newman-report.html` — open in browser for pass/fail breakdown per request.
+- Fail the job on Newman exit code after artifact upload (stricter gate)
+- Seed dedicated users per CI run to avoid lockout interference

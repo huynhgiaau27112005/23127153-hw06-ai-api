@@ -2,7 +2,11 @@
 
 **Student:** Huỳnh Gia Âu | **MSSV:** 23127153  
 **Course:** Software Testing — HW06 API Testing with AI  
-**Date:** 2026-08-30
+**Date:** 2026-08-30  
+**Public GitHub:** https://github.com/huynhgiaau27112005/23127153-hw06-ai-api  
+**CI runs:** [full suite](https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/actions/runs/33755055651) · [`--bail`](https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/actions/runs/33755064475)  
+**Public GitHub:** https://github.com/huynhgiaau27112005/23127153-hw06-ai-api  
+**CI runs:** [full suite](https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/actions/runs/33755055651) · [`--bail`](https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/actions/runs/33755064475)
 
 ## 1. Objective
 

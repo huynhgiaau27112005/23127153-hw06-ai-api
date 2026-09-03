@@ -1,7 +1,8 @@
 # Bug Log — EShop API (HW06)
 
 **Student:** Huỳnh Gia Âu (23127153)  
-**SUT:** EShop API `http://127.0.0.1:3010`
+**SUT:** EShop API `http://127.0.0.1:3010`  
+**GitHub Issues:** https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/issues
 
 ## BUG-01: No admin role check on admin endpoints
 
@@ -14,6 +15,7 @@
 | **Expected** | 403 Forbidden for non-admin |
 | **Actual** | 200 OK — regular user can list and delete users |
 | **Root cause** | `authenticateToken` middleware checks JWT validity only, not `req.user.role` |
+| **GitHub Issue** | [#1](https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/issues/1) |
 
 ## BUG-02: Checkout accepts client-supplied total_amount
 
@@ -26,6 +28,7 @@
 | **Expected** | 400 — total must match cart |
 | **Actual** | 200 — order created with tampered amount |
 | **Root cause** | Server inserts `total_amount` from request body without validation |
+| **GitHub Issue** | [#2](https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/issues/2) |
 
 ## BUG-03: Login response includes plaintext password
 
@@ -38,6 +41,7 @@
 | **Expected** | User object without password field |
 | **Actual** | Full user row returned including `password` |
 | **Root cause** | `res.json({ token, user })` sends entire DB row |
+| **GitHub Issue** | [#3](https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/issues/3) |
 
 ## BUG-04: Delete non-existent user returns 200
 
@@ -50,6 +54,7 @@
 | **Expected** | 404 Not Found |
 | **Actual** | 200 `{ message: "User deleted" }` even when `changes === 0` |
 | **Root cause** | No check on `this.changes` after DELETE |
+| **GitHub Issue** | [#4](https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/issues/4) |
 
 ## BUG-05: Empty cart still allows checkout
 
@@ -62,6 +67,7 @@
 | **Expected** | 400 — cart is empty |
 | **Actual** | 200 — order created with no items |
 | **Root cause** | Checkout does not read `userCarts` |
+| **GitHub Issue** | [#5](https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/issues/5) |
 
 ## BUG-06: JWT secret hardcoded in source
 
@@ -74,6 +80,7 @@
 | **Expected** | Secret from environment variable |
 | **Actual** | `SECRET_KEY = "super_secret_key_that_should_not_be_here"` |
 | **Root cause** | Development shortcut left in production code |
+| **GitHub Issue** | [#6](https://github.com/huynhgiaau27112005/23127153-hw06-ai-api/issues/6) |
 
 ## Summary
 
